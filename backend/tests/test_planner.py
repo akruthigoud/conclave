@@ -28,7 +28,7 @@ def test_plan_demo_mode_produces_bounded_subtasks():
 
     assert 1 <= len(subtasks) <= 4
     assert all("renewable energy" in s for s in subtasks)
-    # subtasks should be genuinely distinct angles, not duplicates
+    # no duplicate subtasks
     assert len(set(subtasks)) == len(subtasks)
 
 

@@ -3,7 +3,7 @@ from app.services.llm import DemoProvider
 from app.services.search import SearchResult
 
 
-def test_research_with_no_results_reports_honestly(monkeypatch):
+def test_research_with_no_results(monkeypatch):
     monkeypatch.setattr("app.agents.researcher.search", lambda subtask: [])
 
     finding = research("Obscure topic with no results", DemoProvider())

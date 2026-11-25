@@ -1,10 +1,6 @@
-"""
-Critic agent: the quality gate between research and writing.
+"""Critic agent: checks whether the findings cover the question and lists any gaps.
 
-Without this node, the graph would always write a report after exactly
-one research pass regardless of how thin the findings were. The critic
-is what makes this a *loop* rather than a fixed pipeline — it can send
-the graph back to research specific gaps before allowing a final report.
+If gaps are found, the graph routes back to research before writing.
 """
 
 from app.core.config import get_settings
@@ -22,13 +18,10 @@ def critique(findings: list[Finding], provider: LLMProvider) -> Critique:
     ]
 
     if not provider.is_real_reasoning:
-        # Demo mode uses the same coverage heuristic a real critic prompt
-        # would ultimately be checked against: does every subtask have a
-        # non-trivial, sourced finding?
+        # demo mode: every subtask needs a non-trivial, sourced finding
         return Critique(is_sufficient=len(thin_findings) == 0, gaps=thin_findings)
 
-    # With a real LLM available, ask it to judge substantive coverage,
-    # not just length — a long finding can still miss the point.
+    # with a real LLM, ask it to judge coverage, not just length
     system = (
         "You are a research critic. Given subtask findings, decide if together "
         "they sufficiently cover the topic. Reply with 'SUFFICIENT' or list the "

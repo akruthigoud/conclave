@@ -1,8 +1,4 @@
-"""
-End-to-end tests of the compiled graph, running the real demo provider
-(no LLM needed) with the search function mocked so tests are fast and
-don't depend on network access or DuckDuckGo's availability.
-"""
+"""End-to-end tests for the graph, with search mocked out."""
 
 from app.core.graph import run_research
 from app.services.search import SearchResult
@@ -28,9 +24,7 @@ def test_run_research_end_to_end_produces_report(monkeypatch):
 
 
 def test_run_research_terminates_within_max_rounds(monkeypatch):
-    """Even findings that would repeatedly look 'thin' to the critic must
-    not loop forever — this is the test that would fail if the round
-    counter or routing logic had an off-by-one bug."""
+    """If findings keep looking thin, the graph should still stop at the round limit."""
     monkeypatch.setattr("app.agents.researcher.search", lambda subtask: [])  # always empty -> always "thin"
 
     result = run_research("What is an untestable hypothetical?")
@@ -38,7 +32,7 @@ def test_run_research_terminates_within_max_rounds(monkeypatch):
     from app.core.config import get_settings
 
     assert result["round"] <= get_settings().max_critique_rounds + 1
-    assert result["report"] is not None  # graph must still reach `write`, not hang
+    assert result["report"] is not None
 
 
 def test_run_research_every_finding_has_matching_subtask(monkeypatch):

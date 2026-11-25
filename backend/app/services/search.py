@@ -1,11 +1,4 @@
-"""
-Web search, free and keyless by default.
-
-DuckDuckGo's HTML search requires no signup or API key, which keeps
-the zero-cost-by-default philosophy consistent with the LLM layer —
-the researcher agent does real, live retrieval even when no LLM
-provider is configured.
-"""
+"""Web search via DuckDuckGo (no API key needed)."""
 
 from dataclasses import dataclass
 
@@ -26,7 +19,7 @@ def search(query: str, max_results: int | None = None) -> list[SearchResult]:
 
     limit = max_results or settings.max_search_results_per_subtask
 
-    from ddgs import DDGS  # imported lazily — network dependency, not needed for unit tests
+    from ddgs import DDGS  # lazy import
 
     results: list[SearchResult] = []
     with DDGS() as ddgs:

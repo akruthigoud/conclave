@@ -1,12 +1,4 @@
-"""
-Planner agent: turns one broad research question into a small set of
-concrete, independently-searchable subtasks.
-
-Splitting the question up front — rather than researching it as one
-blob — is what lets the researcher agent run focused searches instead
-of one query trying to cover everything at once, and lets the critic
-reason about coverage subtask-by-subtask.
-"""
+"""Planner agent: splits a research question into a few searchable subtasks."""
 
 import re
 
@@ -41,9 +33,7 @@ def plan(question: str, provider: LLMProvider) -> list[str]:
 
 
 def _extract_topic(question: str) -> str:
-    """Best-effort topic extraction for the demo path: strips common question
-    scaffolding ('what is', 'how does', trailing '?') to get a noun phrase
-    that reads naturally inside the template angles above."""
+    """Strip question words ('what is', 'how does', '?') to get the topic phrase."""
     cleaned = question.strip().rstrip("?")
     cleaned = re.sub(
         r"^(what is|what are|how does|how do|why is|why are|explain|tell me about)\s+",

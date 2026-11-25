@@ -1,11 +1,4 @@
-"""
-The state object every node in the graph reads from and writes to.
-
-LangGraph passes this dict-like state between nodes; using a TypedDict
-(rather than passing loose positional arguments) makes the contract
-between agents explicit and lets a type checker catch a node that
-forgets to populate a field the next node depends on.
-"""
+"""Shared state passed between the graph nodes."""
 
 from typing import TypedDict
 

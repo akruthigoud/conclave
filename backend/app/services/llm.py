@@ -1,16 +1,7 @@
-"""
-Pluggable text-generation backends behind one interface — the same
-Strategy pattern used elsewhere in this portfolio, applied here to
-agent reasoning instead of RAG answer synthesis.
+"""LLM providers behind a common interface.
 
-`DemoProvider` deliberately does *not* try to fake real reasoning with
-canned text pretending to be an LLM. Instead it does the honest thing:
-every agent that calls the LLM falls back to a clearly-labeled
-template transformation of its real inputs (real search results, real
-question text). Nothing about the demo path is fabricated — it's just
-un-synthesized. That's what makes the whole graph runnable and
-inspectable with zero API key, which matters far more for a portfolio
-project than a demo mode that looks impressive but is fake.
+DemoProvider runs without an API key: agents check is_real_reasoning
+and fall back to template output built from the real search results.
 """
 
 from abc import ABC, abstractmethod
@@ -29,9 +20,7 @@ class LLMProvider(ABC):
 
     @property
     def is_real_reasoning(self) -> bool:
-        """False for the demo provider — lets calling agents choose a
-        template fallback instead of sending a prompt that expects an
-        LLM-quality response."""
+        """False for DemoProvider, so agents use their template fallback."""
         return True
 
 
@@ -45,10 +34,7 @@ class DemoProvider(LLMProvider):
         return False
 
     def complete(self, system: str, user: str) -> str:
-        # Never called directly in demo mode — every agent checks
-        # is_real_reasoning first and takes its template path instead.
-        # Kept here so the interface stays uniform and swapping providers
-        # never requires touching agent code.
+        # not used: agents check is_real_reasoning and use templates instead
         raise NotImplementedError("DemoProvider does not generate text; agents branch on is_real_reasoning")
 
 

@@ -1,5 +1,4 @@
-"""Writer agent: the terminal node — turns accumulated findings into
-one coherent, structured report with inline source attribution."""
+"""Writer agent: combines the findings into a markdown report with sources."""
 
 from app.models.state import Finding
 from app.services.llm import LLMProvider

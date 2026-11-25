@@ -1,6 +1,4 @@
-"""Centralized configuration, mirroring the same pattern used across
-this portfolio's other projects: every tunable lives here, read once
-from environment variables, never scattered through the codebase."""
+"""App settings, loaded from environment variables / .env."""
 
 from functools import lru_cache
 from typing import Literal
@@ -14,24 +12,18 @@ class Settings(BaseSettings):
 
     app_name: str = "Conclave"
 
-    # --- Generation backend ---
-    # "demo"   -> deterministic templated responses, zero cost, zero API key,
-    #             so the graph topology and agent handoffs can be inspected
-    #             and demoed without paying for tokens.
-    # "openai" / "groq" -> real reasoning, requires an API key.
+    # LLM backend: "demo" needs no API key; "openai" / "groq" need a key
     llm_provider: Literal["demo", "openai", "groq"] = "demo"
     openai_model: str = "gpt-4o-mini"
     groq_model: str = "llama-3.1-8b-instant"
     openai_api_key: str | None = None
     groq_api_key: str | None = None
 
-    # --- Search backend ---
-    # DuckDuckGo requires no API key or signup, which keeps the zero-cost
-    # default consistent with the LLM backend above.
+    # search backend
     search_provider: Literal["duckduckgo", "none"] = "duckduckgo"
     max_search_results_per_subtask: int = 4
 
-    # --- Graph behavior ---
+    # graph behavior
     max_subtasks: int = 4
     max_critique_rounds: int = Field(
         default=2, description="Upper bound on planner<->critic loops before forcing a final write-up"

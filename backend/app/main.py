@@ -8,7 +8,7 @@ settings = get_settings()
 
 app = FastAPI(
     title=settings.app_name,
-    description="A multi-agent research system built on LangGraph: plan -> research -> critique -> write, with a genuine critique loop.",
+    description="A multi-agent research system built on LangGraph: plan -> research -> critique -> write with a critique loop.",
     version="1.0.0",
 )
 

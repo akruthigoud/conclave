@@ -1,12 +1,6 @@
-"""
-Researcher agent: for one subtask, runs a real web search and turns
-the results into a grounded finding.
+"""Researcher agent: runs a web search for a subtask and summarizes the results.
 
-Search happens identically in demo and real-LLM mode — only the
-summarization step branches. This means the demo path is never
-searching against nothing; it's genuinely retrieving live results and
-presenting them, just without LLM-generated prose stitching them
-together.
+In demo mode the summary is built from the search snippets instead of an LLM.
 """
 
 from app.models.state import Finding
@@ -43,8 +37,6 @@ def research(subtask: str, provider: LLMProvider) -> Finding:
 
 
 def _template_summary(results: list) -> str:
-    """Demo-mode fallback: presents the real, retrieved snippets directly
-    rather than fabricating a synthesized paragraph an LLM would normally
-    produce — honest about what a template can and can't do."""
+    """Join the top search snippets into a summary (used when no LLM is configured)."""
     lines = [f"{r.title}: {r.snippet}" for r in results[:3] if r.snippet]
     return " / ".join(lines) if lines else "Search returned results with no usable snippet text."
