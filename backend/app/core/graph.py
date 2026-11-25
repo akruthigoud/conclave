@@ -1,19 +1,11 @@
-"""
-The actual multi-agent graph.
+"""LangGraph workflow.
 
-Topology:
-
-    plan -> research -> critique --[sufficient or out of rounds]--> write -> END
+    plan -> research -> critique --[sufficient or max rounds]--> write -> END
                 ^                |
-                |                | [gaps found and rounds remain]
-                +----------------+
+                +--[gaps found]--+
 
-This is a genuine loop, not a fixed pipeline: the critic can send
-control back to research with newly-identified gap subtasks, and only
-the round counter (not a hardcoded step count) decides when to stop.
-That loop is the actual point of using LangGraph instead of a plain
-function call chain — a linear pipeline can't represent "go research
-more, then re-check" without hand-rolled control flow.
+The critic can send the graph back to research with new subtasks.
+The loop stops when coverage is sufficient or MAX_CRITIQUE_ROUNDS is reached.
 """
 
 from langgraph.graph import END, StateGraph
@@ -67,13 +59,13 @@ def build_graph():
 
     graph.add_node("plan", _plan_node)
     graph.add_node("research", _research_node)
-    graph.add_node("critique", _critique_node)
+    graph.add_node("critic", _critique_node)
     graph.add_node("write", _write_node)
 
     graph.set_entry_point("plan")
     graph.add_edge("plan", "research")
-    graph.add_edge("research", "critique")
-    graph.add_conditional_edges("critique", _route_after_critique, {"write": "write", "research": "research"})
+    graph.add_edge("research", "critic")
+    graph.add_conditional_edges("critic", _route_after_critique, {"write": "write", "research": "research"})
     graph.add_edge("write", END)
 
     return graph.compile()
